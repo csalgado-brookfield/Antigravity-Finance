@@ -96,7 +96,12 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'list_transactions' %}">Transactions</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'upload_csv' %}">Upload</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+                        <li class="nav-item">
+                            <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+                                {% csrf_token %}
+                            </form>
+                            <a class="nav-link" href="#" onclick="document.getElementById('logout-form').submit(); return false;">Logout</a>
+                        </li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                     {% endif %}
