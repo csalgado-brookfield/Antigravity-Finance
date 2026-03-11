@@ -25,8 +25,11 @@
     <div class="col-md-4">
         <div class="glass-card text-center">
             <h5>Status</h5>
-            <div class="stat-value" style="font-size: 1.5rem; color: #4caf50;">On Track</div>
-            <p class="text-muted">vs Previous Month</p>
+            <div class="stat-value" style="font-size: 1.5rem; color: {% if percent_change <= 0 %}#4caf50{% else %}#f44336{% endif %};">
+                {{ percent_change|floatformat:1 }}%
+                <i class="bi bi-caret-{% if percent_change <= 0 %}down{% else %}up{% endif %}-fill"></i>
+            </div>
+            <p class="text-muted">vs Previous Month (${{ prev_total_spend|floatformat:2 }})</p>
         </div>
     </div>
 </div>
