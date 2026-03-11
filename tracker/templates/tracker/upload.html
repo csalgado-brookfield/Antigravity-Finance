@@ -1,0 +1,28 @@
+{% extends 'tracker/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="glass-card">
+            <h3 class="mb-4 text-center">Import Statements</h3>
+            <p class="text-muted text-center mb-4">
+                Upload your credit card statement CSV file. <br>
+                We'll process it and categorize your spending automatically.
+            </p>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">Process Statement</button>
+                </div>
+            </form>
+            <div class="mt-4">
+                <small class="text-muted">
+                    Supported Headers: Date, Description, Merchant, Amount, Debit.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

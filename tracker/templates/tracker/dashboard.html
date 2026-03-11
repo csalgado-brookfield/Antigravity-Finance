@@ -1,0 +1,101 @@
+{% extends 'tracker/base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2 class="mb-4">Financial Overview</h2>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="glass-card text-center">
+            <h5>Total Spend</h5>
+            <div class="stat-value">${{ total_spend }}</div>
+            <p class="text-muted">Current Period</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="glass-card text-center">
+            <h5>Top Category</h5>
+            <div class="stat-value" style="font-size: 1.5rem;">Food & Dining</div>
+            <p class="text-muted">Mostly Restaurants</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="glass-card text-center">
+            <h5>Status</h5>
+            <div class="stat-value" style="font-size: 1.5rem; color: #4caf50;">On Track</div>
+            <p class="text-muted">vs Previous Month</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4 g-4">
+    <div class="col-md-6">
+        <div class="glass-card h-100 d-flex align-items-center justify-content-center">
+            {% if chart_pie %}
+                {{ chart_pie|safe }}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-pie-chart" style="font-size: 3rem; opacity: 0.3;"></i>
+                    <p class="mt-3 text-muted">No category data available</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="glass-card h-100 d-flex align-items-center justify-content-center">
+            {% if chart_line %}
+                {{ chart_line|safe }}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-graph-up" style="font-size: 3rem; opacity: 0.3;"></i>
+                    <p class="mt-3 text-muted">No trend data available</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="glass-card">
+            <h4>Recent Transactions</h4>
+            <div class="table-responsive">
+                <table class="table table-hover mt-3">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tx in recent_transactions %}
+                        <tr>
+                            <td>{{ tx.date }}</td>
+                            <td>{{ tx.description }}</td>
+                            <td>
+                                <span class="badge rounded-pill bg-info text-dark">
+                                    {{ tx.category.name|default:"Uncategorized" }}
+                                </span>
+                            </td>
+                            <td class="text-end fw-bold">${{ tx.amount }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No transactions found. Upload a CSV to get started!</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-3">
+                <a href="{% url 'list_transactions' %}" class="btn btn-outline-light btn-sm">View All Transactions</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
