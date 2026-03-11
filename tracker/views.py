@@ -25,6 +25,12 @@ def dashboard(request):
         cat_names = [d['category__name'] or 'Uncategorized' for d in category_data]
         cat_totals = [float(d['total'] or 0) for d in category_data]
         
+        # Calculate Top Category
+        top_cat_name = "None"
+        if category_data:
+            top_cat_item = max(category_data, key=lambda x: x['total'] or 0)
+            top_cat_name = top_cat_item['category__name'] or "Uncategorized"
+        
         if cat_names:
             fig_pie = px.pie(names=cat_names, values=cat_totals, title="Spending by Category",
                             color_discrete_sequence=px.colors.sequential.RdBu)
@@ -43,6 +49,7 @@ def dashboard(request):
 
     context = {
         'total_spend': total_spend,
+        'top_category': top_cat_name if transactions.exists() else "None",
         'chart_pie': chart_pie,
         'chart_line': chart_line,
         'recent_transactions': transactions.order_by('-date')[:10],

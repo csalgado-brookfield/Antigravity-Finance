@@ -11,15 +11,15 @@
     <div class="col-md-4">
         <div class="glass-card text-center">
             <h5>Total Spend</h5>
-            <div class="stat-value">${{ total_spend }}</div>
+            <div class="stat-value text-truncate" style="font-size: clamp(1.5rem, 5vw, 2.5rem);">${{ total_spend|floatformat:2 }}</div>
             <p class="text-muted">Current Period</p>
         </div>
     </div>
     <div class="col-md-4">
         <div class="glass-card text-center">
             <h5>Top Category</h5>
-            <div class="stat-value" style="font-size: 1.5rem;">Food & Dining</div>
-            <p class="text-muted">Mostly Restaurants</p>
+            <div class="stat-value text-truncate" style="font-size: 1.5rem;">{{ top_category }}</div>
+            <p class="text-muted">Highest Expenditure</p>
         </div>
     </div>
     <div class="col-md-4">
