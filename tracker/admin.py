@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Category, Transaction, Account
+from .models import Category, Transaction, Account, MerchantEnrichment
+
+@admin.register(MerchantEnrichment)
+class MerchantEnrichmentAdmin(admin.ModelAdmin):
+    list_display = ('pattern', 'clean_name', 'category', 'user')
+    list_filter = ('category', 'user')
 
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):

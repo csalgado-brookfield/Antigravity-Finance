@@ -157,13 +157,16 @@ def upload_csv(request):
                 if date_str and desc and amount:
                     try:
                         amt = Decimal(str(amount).replace('$', '').replace(',', ''))
-                        cat = auto_categorize(desc)
+                        
+                        # AI Enrichment logic
+                        clean_name, cat = enrich_merchant(desc, request.user)
                         
                         Transaction.objects.create(
                             user=request.user,
                             account=account,
                             date=pd.to_datetime(date_str).date(),
                             description=desc,
+                            clean_description=clean_name,
                             amount=amt,
                             category=cat,
                             source_file=csv_file.name
@@ -186,14 +189,45 @@ def add_account(request):
             return redirect('upload_csv')
     return render(request, 'tracker/add_account.html')
 
+import re
+from .models import MerchantEnrichment
+
+def enrich_merchant(description, user):
+    raw_desc = str(description).upper()
+    
+    # Check if we already have a direct pattern match for THIS user
+    enrichment = MerchantEnrichment.objects.filter(user=user, pattern=raw_desc).first()
+    if enrichment:
+        return enrichment.clean_name, enrichment.category
+
+    # Heuristic cleaning (Remove common store IDs, dates, special chars)
+    # e.g. "MCDONALDS #1234 NY" -> "MCDONALDS"
+    clean_name = re.sub(r'#\d+', '', raw_desc) # Remove #1234
+    clean_name = re.sub(r'\d{2,}', '', clean_name) # Remove long numbers
+    clean_name = re.sub(r'\*+', '', clean_name) # Remove stars
+    clean_name = clean_name.strip()
+
+    # Now check pattern match again with cleaned name
+    enrichment = MerchantEnrichment.objects.filter(user=user, pattern=clean_name).first()
+    if enrichment:
+        return enrichment.clean_name, enrichment.category
+
+    # Fallback to keyword mapping
+    cat = auto_categorize(clean_name)
+    
+    # Capitalize for UI
+    ui_name = clean_name.title()
+    
+    return ui_name, cat
+
 def auto_categorize(description):
     desc = description.lower()
     mapping = {
-        'Food': ['restaurant', 'mcdonalds', 'starbucks', 'uber eats', 'grocery', 'walmart', 'kroger', 'whole foods'],
-        'Transport': ['uber', 'lyft', 'shell', 'exxon', 'gas', 'transit', 'train'],
-        'Entertainment': ['netflix', 'spotify', 'hulu', 'theater', 'cinema', 'game'],
-        'Utilities': ['electric', 'water', 'internet', 'comcast', 'att', 'verizon'],
-        'Rent/Home': ['rent', 'mortgage', 'home depot', 'lowes', 'ikea'],
+        'Food': ['restaurant', 'mcdonalds', 'starbucks', 'uber eats', 'grocery', 'walmart', 'kroger', 'whole foods', 'taco bell', 'king', 'chipotle'],
+        'Transport': ['uber', 'lyft', 'shell', 'exxon', 'gas', 'transit', 'train', 'chevron', 'mobil'],
+        'Entertainment': ['netflix', 'spotify', 'hulu', 'theater', 'cinema', 'game', 'playstation', 'steam'],
+        'Utilities': ['electric', 'water', 'internet', 'comcast', 'att', 'verizon', 't-mobile'],
+        'Rent/Home': ['rent', 'mortgage', 'home depot', 'lowes', 'ikea', 'apartment'],
     }
     
     for cat_name, keywords in mapping.items():
@@ -213,6 +247,17 @@ def list_transactions(request):
         cat_id = request.POST.get('category_id')
         transaction = Transaction.objects.get(id=tx_id, user=request.user)
         category = Category.objects.get(id=cat_id)
+        
+        # LEARNING: Save this behavior for future uploads
+        MerchantEnrichment.objects.update_or_create(
+            user=request.user,
+            pattern=transaction.description.upper(),
+            defaults={
+                'clean_name': transaction.clean_description or transaction.description.title(),
+                'category': category
+            }
+        )
+        
         transaction.category = category
         transaction.save()
         return redirect('list_transactions')

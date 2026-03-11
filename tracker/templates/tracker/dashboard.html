@@ -142,7 +142,9 @@
                         {% for tx in recent_transactions %}
                         <tr>
                             <td>{{ tx.date }}</td>
-                            <td class="text-truncate" style="max-width: 150px;">{{ tx.description }}</td>
+                            <td class="text-truncate" style="max-width: 150px;" title="{{ tx.description }}">
+                                {{ tx.clean_description|default:tx.description }}
+                            </td>
                             <td><span class="badge border border-secondary text-muted">{{ tx.account.name|default:"-" }}</span></td>
                             <td>
                                 <span class="badge rounded-pill bg-info text-dark">

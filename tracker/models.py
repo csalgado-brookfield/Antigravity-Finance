@@ -20,11 +20,24 @@ class Account(models.Model):
     def __str__(self):
         return self.name
 
+class MerchantEnrichment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    pattern = models.CharField(max_length=255) # The raw description pattern
+    clean_name = models.CharField(max_length=255) # e.g. "McDonald's"
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        unique_together = ('user', 'pattern')
+
+    def __str__(self):
+        return f"{self.user.username}: {self.pattern} -> {self.clean_name}"
+
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField()
     description = models.CharField(max_length=255)
+    clean_description = models.CharField(max_length=255, blank=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     source_file = models.CharField(max_length=255, blank=True)
