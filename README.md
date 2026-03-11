@@ -10,12 +10,13 @@ A premium, data-science powered personal finance application built with **Django
 
 ## ✨ Features
 
-- 📊 **Interactive Dashboard**: Visualize spending trends and category breakdowns with Plotly charts.
-- 📂 **Smart CSV Import**: Upload credit card statements; Pandas handles the parsing.
-- 🤖 **Auto-Categorization**: Merchant keywords are automatically mapped to categories (Food, Transport, Utilities, etc.).
-- 🛠 **Transaction Management**: Edit and override categories manually.
-- 🌓 **Premium Design**: Modern dark-mode UI with translucent glass effect cards.
-- 🐳 **Dockerized**: Easy deployment with Docker and Docker Compose.
+- 📊 **MoM Comparison**: Analyze current spending vs. the previous month with dual-line charts and percentage variance.
+- 🎯 **Budget Targets & Alerts**: Set monthly limits per category. Visual indicators turn **Amber** at 80% and **Red** with alerts when exceeded.
+- 🏦 **Multi-Account Analysis**: Track multiple credit cards or checking accounts in one consolidated view.
+- 🤖 **AI Merchant Enrichment**: Automatically cleans "messy" bank descriptions and "learns" your specific categorization habits.
+- 📂 **Smart CSV Import**: Optimized Pandas parsing for high-speed transaction intake.
+- 🌓 **Premium Design**: Modern translucent glassmorphism UI with a focus on visual performance.
+- 🐳 **Dockerized**: Ready for instant deployment on any environment.
 
 ---
 
@@ -24,13 +25,13 @@ A premium, data-science powered personal finance application built with **Django
 If you are setting this up on a new PC, follow these steps:
 
 ### Prerequisites
-- Python 3.10+
+- Python 3.11+
 - Git
 
 ### 1. Clone the Project
 ```bash
-git clone https://github.com/your-username/antigravity-finance.git
-cd antigravity-finance
+git clone https://github.com/csalgado-brookfield/Antigravity-Finance.git
+cd Antigravity-Finance
 ```
 
 ### 2. Set Up Virtual Environment
@@ -71,8 +72,8 @@ If you have **Docker** installed, you can skip the manual setup:
 
 ```bash
 # Clone and enter directory
-git clone https://github.com/your-username/antigravity-finance.git
-cd antigravity-finance
+git clone https://github.com/csalgado-brookfield/Antigravity-Finance.git
+cd Antigravity-Finance
 
 # Launch with Docker Compose
 docker-compose up --build
@@ -93,8 +94,10 @@ The app will be available at `http://localhost:8000`.
 ---
 
 ## 📝 Usage Tips
-1. **Sample Data**: Use the included `sample_statement.csv` to quickly test the dashboard visualizations.
-2. **Admin Panel**: For bulk category management, visit `http://127.0.0.1:8000/admin/`.
+1. **Accounts First**: Before uploading, create an "Account" (e.g. "Main CC") to keep your cross-account analysis clean.
+2. **Budgets**: Set monthly limits in the **Admin Panel** to see real-time Amber/Red alerts on your dashboard.
+3. **AI Training**: If a merchant name is messy or uncategorized, update it in the **Transactions** view. The system will "learn" this for all future uploads!
+4. **MoM Insights**: Hover over the trend line to see specific spending differences compared to the same day last month.
 
 ---
 *Created with ❤️ by the Antigravity Team.*
