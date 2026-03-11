@@ -33,25 +33,29 @@
 
 <div class="row mt-4 g-4">
     <div class="col-md-6">
-        <div class="glass-card h-100 d-flex align-items-center justify-content-center">
+        <div class="glass-card h-100 overflow-hidden" style="min-height: 450px;">
             {% if chart_pie %}
                 {{ chart_pie|safe }}
             {% else %}
-                <div class="text-center py-5">
-                    <i class="bi bi-pie-chart" style="font-size: 3rem; opacity: 0.3;"></i>
-                    <p class="mt-3 text-muted">No category data available</p>
+                <div class="h-100 d-flex align-items-center justify-content-center">
+                    <div class="text-center py-5">
+                        <i class="bi bi-pie-chart" style="font-size: 3rem; opacity: 0.3;"></i>
+                        <p class="mt-3 text-muted">No category data available</p>
+                    </div>
                 </div>
             {% endif %}
         </div>
     </div>
     <div class="col-md-6">
-        <div class="glass-card h-100 d-flex align-items-center justify-content-center">
+        <div class="glass-card h-100 overflow-hidden" style="min-height: 450px;">
             {% if chart_line %}
                 {{ chart_line|safe }}
             {% else %}
-                <div class="text-center py-5">
-                    <i class="bi bi-graph-up" style="font-size: 3rem; opacity: 0.3;"></i>
-                    <p class="mt-3 text-muted">No trend data available</p>
+                <div class="h-100 d-flex align-items-center justify-content-center">
+                    <div class="text-center py-5">
+                        <i class="bi bi-graph-up" style="font-size: 3rem; opacity: 0.3;"></i>
+                        <p class="mt-3 text-muted">No trend data available</p>
+                    </div>
                 </div>
             {% endif %}
         </div>

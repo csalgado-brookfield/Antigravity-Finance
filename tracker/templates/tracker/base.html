@@ -83,6 +83,16 @@
 
         .table th { border-color: var(--glass-border); }
         .table td { border-color: var(--glass-border); }
+
+        /* Constrain Plotly charts */
+        .js-plotly-plot, .plot-container {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+        
+        div[id^="plotly-"] {
+            width: 100% !important;
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>

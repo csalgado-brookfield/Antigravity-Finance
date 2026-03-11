@@ -33,9 +33,18 @@ def dashboard(request):
         
         if cat_names:
             fig_pie = px.pie(names=cat_names, values=cat_totals, title="Spending by Category",
-                            color_discrete_sequence=px.colors.sequential.RdBu)
-            fig_pie.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color="white")
-            chart_pie = fig_pie.to_html(full_html=False)
+                            color_discrete_sequence=px.colors.sequential.RdBu,
+                            template="plotly_dark")
+            fig_pie.update_layout(
+                autosize=True,
+                height=400,
+                paper_bgcolor='rgba(0,0,0,0)', 
+                plot_bgcolor='rgba(0,0,0,0)', 
+                font_color="white",
+                margin=dict(l=10, r=10, t=50, b=10),
+                legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5)
+            )
+            chart_pie = fig_pie.to_html(full_html=False, config={'responsive': True, 'displayModeBar': False})
 
         # Chart 2: Spend over Time
         time_data = transactions.values('date').annotate(total=Sum('amount')).order_by('date')
@@ -43,9 +52,18 @@ def dashboard(request):
         amounts = [float(d['total'] or 0) for d in time_data]
         
         if dates:
-            fig_line = px.line(x=dates, y=amounts, title="Spending Trend")
-            fig_line.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color="white")
-            chart_line = fig_line.to_html(full_html=False)
+            fig_line = px.line(x=dates, y=amounts, title="Spending Trend", template="plotly_dark")
+            fig_line.update_layout(
+                autosize=True,
+                height=400,
+                paper_bgcolor='rgba(0,0,0,0)', 
+                plot_bgcolor='rgba(0,0,0,0)', 
+                font_color="white",
+                margin=dict(l=10, r=10, t=50, b=10),
+                xaxis=dict(showgrid=False),
+                yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)')
+            )
+            chart_line = fig_line.to_html(full_html=False, config={'responsive': True, 'displayModeBar': False})
 
     context = {
         'total_spend': total_spend,
