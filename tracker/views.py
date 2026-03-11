@@ -118,6 +118,15 @@ def dashboard(request):
                     'color': '#f44336' if percent >= 100 else ('#fb8c00' if percent >= 80 else '#bb86fc')
                 })
 
+        # Account Summary
+        account_summary = transactions.filter(date__gte=first_day_this_month).values('account__name').annotate(total=Sum('amount'))
+        accounts_data = []
+        for item in account_summary:
+            accounts_data.append({
+                'name': item['account__name'] or 'Cash/Other',
+                'total': float(item['total'] or 0)
+            })
+
     context = {
         'total_spend': total_spend,
         'prev_total_spend': prev_total_spend,
@@ -126,6 +135,7 @@ def dashboard(request):
         'chart_pie': chart_pie,
         'chart_line': chart_line,
         'budgets': budgets if transactions.exists() else [],
+        'accounts': accounts_data if transactions.exists() else [],
         'recent_transactions': transactions.order_by('-date')[:10],
     }
     return render(request, 'tracker/dashboard.html', context)
@@ -133,28 +143,25 @@ def dashboard(request):
 @login_required
 def upload_csv(request):
     if request.method == 'POST':
-        form = TransactionUploadForm(request.POST, request.FILES)
+        form = TransactionUploadForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
             csv_file = request.FILES['csv_file']
+            account = form.cleaned_data.get('account')
             df = pd.read_csv(csv_file)
             
-            # Basic mapping logic (Assumes headers: Date, Description, Amount)
-            # You might need to adjust these based on your specific CSV
             for index, row in df.iterrows():
-                # Attempt to find common column names
                 date_str = row.get('Date') or row.get('Transaction Date')
                 desc = row.get('Description') or row.get('Merchant')
                 amount = row.get('Amount') or row.get('Debit')
                 
                 if date_str and desc and amount:
-                    # Simple cleaning
                     try:
                         amt = Decimal(str(amount).replace('$', '').replace(',', ''))
-                        # Auto-categorization logic
                         cat = auto_categorize(desc)
                         
                         Transaction.objects.create(
                             user=request.user,
+                            account=account,
                             date=pd.to_datetime(date_str).date(),
                             description=desc,
                             amount=amt,
@@ -166,8 +173,18 @@ def upload_csv(request):
             
             return redirect('dashboard')
     else:
-        form = TransactionUploadForm()
+        form = TransactionUploadForm(user=request.user)
     return render(request, 'tracker/upload.html', {'form': form})
+
+@login_required
+def add_account(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        last_four = request.POST.get('last_four')
+        if name:
+            Account.objects.create(user=request.user, name=name, last_four=last_four)
+            return redirect('upload_csv')
+    return render(request, 'tracker/add_account.html')
 
 def auto_categorize(description):
     desc = description.lower()

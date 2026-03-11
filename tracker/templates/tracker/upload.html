@@ -13,6 +13,9 @@
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form|crispy }}
+                <div class="text-end mb-3">
+                    <a href="{% url 'add_account' %}" class="small text-accent text-decoration-none">+ Add New Account</a>
+                </div>
                 <div class="d-grid gap-2 mt-4">
                     <button type="submit" class="btn btn-primary">Process Statement</button>
                 </div>

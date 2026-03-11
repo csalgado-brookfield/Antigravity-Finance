@@ -15,6 +15,7 @@
                         <tr>
                             <th>Date</th>
                             <th>Description</th>
+                            <th>Account</th>
                             <th>Category</th>
                             <th>Amount</th>
                             <th>Action</th>
@@ -24,7 +25,8 @@
                         {% for tx in transactions %}
                         <tr>
                             <td>{{ tx.date }}</td>
-                            <td>{{ tx.description }}</td>
+                            <td class="text-truncate" style="max-width: 200px;">{{ tx.description }}</td>
+                            <td><span class="badge bg-secondary opacity-75">{{ tx.account.name|default:"Cash/Other" }}</span></td>
                             <td>
                                 <form method="post" class="d-flex align-items-center">
                                     {% csrf_token %}
