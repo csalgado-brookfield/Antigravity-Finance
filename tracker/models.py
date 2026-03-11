@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     color = models.CharField(max_length=7, default="#3498db") # Hex color for charts
+    monthly_budget = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
 
     class Meta:
         verbose_name_plural = "Categories"

@@ -3,7 +3,7 @@ from .models import Category, Transaction
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'color')
+    list_display = ('name', 'monthly_budget', 'color')
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):

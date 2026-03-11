@@ -25,14 +25,51 @@
     <div class="col-md-4">
         <div class="glass-card text-center">
             <h5>Status</h5>
-            <div class="stat-value" style="font-size: 1.5rem; color: {% if percent_change <= 0 %}#4caf50{% else %}#f44336{% endif %};">
-                {{ percent_change|floatformat:1 }}%
-                <i class="bi bi-caret-{% if percent_change <= 0 %}down{% else %}up{% endif %}-fill"></i>
-            </div>
+            {% if percent_change <= 0 %}
+                <div class="stat-value" style="font-size: 1.5rem; color: #4caf50;">
+                    {{ percent_change|floatformat:1 }}% <i class="bi bi-caret-down-fill"></i>
+                </div>
+            {% else %}
+                <div class="stat-value" style="font-size: 1.5rem; color: #f44336;">
+                    {{ percent_change|floatformat:1 }}% <i class="bi bi-caret-up-fill"></i>
+                </div>
+            {% endif %}
             <p class="text-muted">vs Previous Month (${{ prev_total_spend|floatformat:2 }})</p>
         </div>
     </div>
 </div>
+
+{% if budgets %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="glass-card">
+            <h4 class="mb-4">Budget Targets</h4>
+            <div class="row g-3">
+                {% for budget in budgets %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="p-3 border rounded border-secondary bg-dark bg-opacity-25">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold">{{ budget.name }}</span>
+                            <span class="text-muted small">${{ budget.spend|floatformat:0 }} / ${{ budget.budget|floatformat:0 }}</span>
+                        </div>
+                        <div class="progress" style="height: 10px; background-color: rgba(255,255,255,0.1);">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ budget.percent }}%; background-color: {{ budget.color }};" 
+                                 aria-valuenow="{{ budget.percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        {% if budget.raw_percent >= 100 %}
+                            <div class="text-danger small mt-2"><i class="bi bi-exclamation-triangle-fill"></i> Budget Exceeded!</div>
+                        {% elif budget.raw_percent >= 80 %}
+                            <div class="text-warning small mt-2"><i class="bi bi-exclamation-circle-fill"></i> Approaching Limit</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <div class="row mt-4 g-4">
     <div class="col-md-6">

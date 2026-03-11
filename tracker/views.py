@@ -102,6 +102,22 @@ def dashboard(request):
         )
         chart_line = fig_mom.to_html(full_html=False, config={'responsive': True, 'displayModeBar': False})
 
+        # Budget Calculations
+        budgets = []
+        all_categories = Category.objects.all()
+        for cat in all_categories:
+            cat_spend = transactions.filter(date__gte=first_day_this_month, category=cat).aggregate(total=Sum('amount'))['total'] or 0
+            if cat.monthly_budget > 0:
+                percent = (cat_spend / cat.monthly_budget) * 100
+                budgets.append({
+                    'name': cat.name,
+                    'spend': cat_spend,
+                    'budget': cat.monthly_budget,
+                    'percent': min(float(percent), 100), # Cap at 100 for progress bar
+                    'raw_percent': float(percent),
+                    'color': '#f44336' if percent >= 100 else ('#fb8c00' if percent >= 80 else '#bb86fc')
+                })
+
     context = {
         'total_spend': total_spend,
         'prev_total_spend': prev_total_spend,
@@ -109,6 +125,7 @@ def dashboard(request):
         'top_category': top_cat_name,
         'chart_pie': chart_pie,
         'chart_line': chart_line,
+        'budgets': budgets if transactions.exists() else [],
         'recent_transactions': transactions.order_by('-date')[:10],
     }
     return render(request, 'tracker/dashboard.html', context)
